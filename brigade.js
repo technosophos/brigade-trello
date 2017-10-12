@@ -21,6 +21,7 @@ events.on("trello", (e, p) => {
     `-u ${p.secrets.cosmosName} -p  ${p.secrets.cosmosKey} --ssl --sslAllowInvalidCertificates ` +
     `--eval 'db.trello.insert(${e.payload})'`
   ]
+  console.log(`--eval 'db.trello.insert(${e.payload})'`)
 
   // Message to send to Slack
   var m = `Card "${e.card.text}" moved from "${e.listBefore.text}" to "${e.listAfter.text}" <${hook.model.shortURL}>`
