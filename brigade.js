@@ -49,5 +49,5 @@ events.on("exec", (e, p) => {
 function dbCmd(p, script) {
   return `mongo ${p.secrets.cosmosName}.documents.azure.com:10255/test ` +
     `-u ${p.secrets.cosmosName} -p  ${p.secrets.cosmosKey} --ssl --sslAllowInvalidCertificates ` +
-    `--exec '${script}'`
+    `--eval '${script}'`
 }
