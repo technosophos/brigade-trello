@@ -19,7 +19,7 @@ events.on("trello", (e, p) => {
   // Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
   slack.env = {
-    SLACK_WEBHOOK: project.secrets.SLACK_WEBHOOK,
+    SLACK_WEBHOOK: p.secrets.SLACK_WEBHOOK,
     SLACK_USERNAME: "BrigadeBot",
     SLACK_TITLE: `Update to card ${e.card.text}`,
     SLACK_MESSAGE: m
