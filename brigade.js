@@ -7,6 +7,7 @@ events.on("trello", (e, p) => {
   var d = hook.action.display
 
   if (d.translationKey = moveAction) {
+    console.log(d)
     var e = d.entities
     console.log(`Card ${e.card.text} moved from ${e.listBefore.text} to ${e.listAfter.text}`)
   }
