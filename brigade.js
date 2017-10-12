@@ -22,7 +22,7 @@ events.on("trello", (e, p) => {
   console.log(`--eval 'db.trello.insert(${e.payload})'`)
 
   // Message to send to Slack
-  var m = `Moved from "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortURL}>`
+  var m = `Moved from "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}>`
 
   // Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
@@ -30,7 +30,7 @@ events.on("trello", (e, p) => {
   slack.env = {
     SLACK_WEBHOOK: p.secrets.SLACK_WEBHOOK,
     SLACK_USERNAME: "BrigadeBot",
-    SLACK_TITLE: `Update to card ${d.entities.card.text}`,
+    SLACK_TITLE: `Update to card "${d.entities.card.text}" for @technosophos`,
     SLACK_MESSAGE: m
   }
 
