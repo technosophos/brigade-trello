@@ -16,14 +16,9 @@ events.on("trello", (e, p) => {
   // Store move record in CosmosDB
   var mongo = new Job("trello-db", "mongo:3.2")
   mongo.tasks = [
-    "mongo",
-    p.secrets.cosmosName + ".documents.azure.com:10255/test",
-    "-u", p.secrets.cosmosName,
-    "-p", p.secrets.cosmosKey,
-    "--ssl",
-    "--sslAllowInvalidCertificates",
-    "--eval",
-    `'db.trello.insert(${e.payload})'`
+    `mongo ${p.secrets.cosmosName}.documents.azure.com:10255/test ` +
+    `-u ${.secrets.cosmosName} -p  ${p.secrets.cosmosKey} --ssl --sslAllowInvalidCertificates ` +
+    `--eval 'db.trello.insert(${e.payload})'`
   ]
 
   // Message to send to Slack
