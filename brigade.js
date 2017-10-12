@@ -28,7 +28,7 @@ events.on("trello", (e, p) => {
   slack.env = {
     SLACK_WEBHOOK: p.secrets.SLACK_WEBHOOK,
     SLACK_USERNAME: "BrigadeBot",
-    SLACK_TITLE: `Update to card ${e.card.text}`,
+    SLACK_TITLE: `Update to card ${d.entities.card.text}`,
     SLACK_MESSAGE: m
   }
 
