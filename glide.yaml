@@ -1,0 +1,9 @@
+package: github.com/technosophos/brigade-trello
+import:
+- package: github.com/deis/brigade
+  repo: git@github.com:deis/brigade.git
+  subpackages:
+  - pkg/brigade
+  - pkg/storage
+  - pkg/webhook
+- package: github.com/gin-gonic/gin
