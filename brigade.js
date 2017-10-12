@@ -1,4 +1,4 @@
-const {events, Job} = require("brigadier")
+const {events, Job, Group} = require("brigadier")
 
 const ACTION_MOVE = "action_move_card_from_list_to_list"
 
@@ -13,6 +13,19 @@ events.on("trello", (e, p) => {
     return
   }
 
+  // Store move record in CosmosDB
+  var mongo = new Job("trello-db", "mongo:3.2")
+  mongo.tasks = [
+    "mongo",
+    p.secrets.cosmosName + ".documents.azure.com:10255/test",
+    "-u", p.secrets.cosmosName,
+    "-p", p.secrets.cosmosKey,
+    "--ssl",
+    "--sslAllowInvalidCertificates",
+    "--eval",
+    `'db.trello.insert(${e.payload})'`
+  ]
+
   // Message to send to Slack
   var m = `Card "${e.card.text}" moved from "${e.listBefore.text}" to "${e.listAfter.text}" <${hook.model.shortURL}>`
 
@@ -24,6 +37,6 @@ events.on("trello", (e, p) => {
     SLACK_TITLE: `Update to card ${e.card.text}`,
     SLACK_MESSAGE: m
   }
-  slack.run()
+  Group.runEach([ mongo, slack ])
 
 })
