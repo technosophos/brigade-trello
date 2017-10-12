@@ -15,6 +15,7 @@ events.on("trello", (e, p) => {
 
   // Store move record in CosmosDB
   var mongo = new Job("trello-db", "mongo:3.2")
+  mongo.storage.enabled = false
   mongo.tasks = [
     dbCmd(p, `db.trello.insert(${e.payload})`)
   ]
@@ -25,6 +26,7 @@ events.on("trello", (e, p) => {
 
   // Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
+  slack.storage.enabled = false
   slack.env = {
     SLACK_WEBHOOK: p.secrets.SLACK_WEBHOOK,
     SLACK_USERNAME: "BrigadeBot",
