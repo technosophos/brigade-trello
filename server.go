@@ -2,13 +2,14 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/deis/brigade/pkg/brigade"
 	"github.com/deis/brigade/pkg/storage"
 	"github.com/deis/brigade/pkg/storage/kube"
-	//"github.com/deis/brigade/pkg/webhook"
+	"github.com/deis/brigade/pkg/webhook"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,7 +47,7 @@ func trello(c *gin.Context) {
 	c.Request.Body.Close()
 
 	// Load project
-	_, err = store.GetProject(pid)
+	proj, err := store.GetProject(pid)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"status": "Resource Not Found"})
 		return
@@ -54,6 +55,12 @@ func trello(c *gin.Context) {
 
 	// Get the brigade.js
 	// Right now, we skip this and let the github project handle it.
+	script, err := webhook.GetFileContents(proj, "master", "brigade.js")
+	if err != nil {
+		log.Printf("Error getting file: %s", err)
+		c.JSON(http.StatusNotFound, gin.H{"status": "Script Not Found"})
+		return
+	}
 
 	// Create the build
 	build := &brigade.Build{
@@ -62,7 +69,7 @@ func trello(c *gin.Context) {
 		Provider:  "trello",
 		Commit:    "master",
 		Payload:   body,
-		//Script:    script,
+		Script:    script,
 	}
 	if err := store.CreateBuild(build); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "Failed to invoke hook"})
