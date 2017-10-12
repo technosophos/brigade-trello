@@ -14,7 +14,7 @@ events.on("trello", (e, p) => {
   }
 
   // Message to send to Slack
-  var m = `Card "${e.card.text}" moved from "${e.listBefore.text}" to "${e.listAfter.text}" <${hook.model.shortURL}>`)
+  var m = `Card "${e.card.text}" moved from "${e.listBefore.text}" to "${e.listAfter.text}" <${hook.model.shortURL}>`
 
   // Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
