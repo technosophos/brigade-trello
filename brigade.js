@@ -17,9 +17,7 @@ events.on("trello", (e, p) => {
   // Store move record in CosmosDB
   var mongo = new Job("trello-db", "mongo:3.2")
   mongo.tasks = [
-    `mongo ${p.secrets.cosmosName}.documents.azure.com:10255/test ` +
-    `-u ${p.secrets.cosmosName} -p  ${p.secrets.cosmosKey} --ssl --sslAllowInvalidCertificates ` +
-    `--eval 'db.trello.insert(${e.payload})'`
+    dbCmd(p, `db.trello.insert(${e.payload})`)
   ]
   console.log(`--eval 'db.trello.insert(${e.payload})'`)
 
@@ -34,6 +32,22 @@ events.on("trello", (e, p) => {
     SLACK_TITLE: `Update to card ${e.card.text}`,
     SLACK_MESSAGE: m
   }
-  Group.runEach([ mongo, slack ])
 
+  Group.runEach([ mongo, slack ])
 })
+
+events.on("exec", (e, p) => {
+  var mongo = new Job("trello-db", "mongo:3.2")
+  mongo.tasks = [
+    dbCmd(p, 'db.trello.find()')
+  ]
+  mongo.run().then( res => {
+    console.log(res)
+  })
+})
+
+function dbCmd(p, script) {
+  return `mongo ${p.secrets.cosmosName}.documents.azure.com:10255/test ` +
+    `-u ${p.secrets.cosmosName} -p  ${p.secrets.cosmosKey} --ssl --sslAllowInvalidCertificates ` +
+    `--exec '${script}'`
+}
