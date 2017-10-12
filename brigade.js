@@ -10,6 +10,7 @@ events.on("trello", (e, p) => {
 
   // Ignore other events. Just capture moves.
   if (d.translationKey != ACTION_MOVE) {
+    console.log(`Skipped ${d.translationKey}`)
     return
   }
 
