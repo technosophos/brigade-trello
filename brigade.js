@@ -1,7 +1,7 @@
 const {events, Job, Group} = require("brigadier")
-
 const ACTION_MOVE = "action_move_card_from_list_to_list"
 
+// Event handler: trello
 events.on("trello", (e, p) => {
   // Parse the JSON payload from Trello.
   var hook = JSON.parse(e.payload)
