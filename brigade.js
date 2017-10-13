@@ -13,16 +13,16 @@ events.on("trello", (e, p) => {
     return
   }
 
-  // Store move record in CosmosDB
+  // JOB 1: Store move record in CosmosDB
   var mongo = new Job("trello-db", "mongo:3.2")
   mongo.storage.enabled = false
   mongo.tasks = [
     dbCmd(p, `db.trello.insert(${e.payload})`)
   ]
 
-  // Slack job will send the message.
-  var m = `From "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}> <@U0RMKK605>`  
+  // JOB 2: Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
+  var m = `From "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}> <@U0RMKK605>`  
   slack.storage.enabled = false
   slack.env = {
     SLACK_WEBHOOK: p.secrets.SLACK_WEBHOOK,
@@ -32,6 +32,7 @@ events.on("trello", (e, p) => {
     SLACK_ICON: "https://a.trellocdn.com/images/ios/0307bc39ec6c9ff499c80e18c767b8b1/apple-touch-icon-152x152-precomposed.png"
   }
 
+  // Run the jobs in order.
   Group.runEach([ mongo, slack ])
 })
 
