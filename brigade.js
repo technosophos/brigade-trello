@@ -22,7 +22,7 @@ events.on("trello", (e, p) => {
   console.log(`--eval 'db.trello.insert(${e.payload})'`)
 
   // Message to send to Slack
-  var m = `From "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}> <U0RMKK605>`
+  var m = `From "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}> <@U0RMKK605>`
 
   // Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
