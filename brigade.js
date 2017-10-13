@@ -22,16 +22,17 @@ events.on("trello", (e, p) => {
   console.log(`--eval 'db.trello.insert(${e.payload})'`)
 
   // Message to send to Slack
-  var m = `Moved from "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}>`
+  var m = `From "${d.entities.listBefore.text}" to "${d.entities.listAfter.text}" <${hook.model.shortUrl}>`
 
   // Slack job will send the message.
   var slack = new Job("slack-notify", "technosophos/slack-notify:latest", ["/slack-notify"])
   slack.storage.enabled = false
   slack.env = {
     SLACK_WEBHOOK: p.secrets.SLACK_WEBHOOK,
-    SLACK_USERNAME: "BrigadeBot",
-    SLACK_TITLE: `Update to card "${d.entities.card.text}" for @technosophos`,
-    SLACK_MESSAGE: m
+    SLACK_USERNAME: "Trello",
+    SLACK_TITLE: `Moved "${d.entities.card.text}" for <@technosophos>`,
+    SLACK_MESSAGE: m,
+    SLACK_ICON: "https://a.trellocdn.com/images/ios/0307bc39ec6c9ff499c80e18c767b8b1/apple-touch-icon-152x152-precomposed.png"
   }
 
   Group.runEach([ mongo, slack ])
