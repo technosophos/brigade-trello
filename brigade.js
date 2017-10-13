@@ -40,6 +40,7 @@ events.on("trello", (e, p) => {
 
 events.on("exec", (e, p) => {
   var mongo = new Job("trello-db", "mongo:3.2")
+  mongo.storage.enabled = false
   mongo.tasks = [
     dbCmd(p, 'db.trello.find()')
   ]
