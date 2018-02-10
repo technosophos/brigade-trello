@@ -15,7 +15,7 @@ spec:
         app: {{ template "brigade-trello.name" . }}
         release: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ template "brigade-trello.name" . }}
+      serviceAccountName: {{ template "brigade-trello.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

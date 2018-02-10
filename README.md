@@ -53,6 +53,10 @@ as well. You can use this to run arbitrary webhooks, but it is insecure by
 design (since it does not seek to validate the identy of the sender or the
 payload). It is at `http://<HOST>/webhook/<PROJECT_ID>`.
 
+> Note: While the above URLs respond to GET and HEAD requests, it will always
+> respond with a no-op 200-level request. Only POST can be used to actually
+> trigger an event.
+
 ## Writing a Brigade File
 
 This gateway emits two Brigade events:

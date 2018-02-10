@@ -46,13 +46,24 @@ func main() {
 	// Generic is just a generic webhook handler
 	generic := router.Group("/generic")
 	generic.Use(gin.Logger())
-	generic.GET("/:project", genericFn)
+	generic.GET("/:project", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"message": "ok"}) })
+	generic.POST("/:project", genericFn)
 
 	router.Run()
 }
 
 func trelloFn(c *gin.Context) {
 	pid := c.Param("project")
+
+	// INCOMPLETE: This is the first step in validating the request originated
+	// from Trello. Finish. https://developers.trello.com/page/webhooks
+	sig := c.Request.Header.Get("x-trello-webhook")
+	if sig == "" {
+		log.Println("No X-Trello-Webhook header present. Skipping")
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Malformed headers"})
+		return
+	}
+	// TODO: validate that the body matches the hash in the sig header.
 
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
