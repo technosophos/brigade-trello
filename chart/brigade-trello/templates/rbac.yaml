@@ -1,0 +1,45 @@
+{{ $fname := include "brigade-trello.fullname" . }}
+{{ $rbacVersion := "rbac.authorization.k8s.io/v1beta1" }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fname }}
+  labels:
+    app: {{ $fname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+{{ if .Values.rbac.enabled }}
+---
+kind: Role
+apiVersion: {{ $rbacVersion }}
+metadata:
+  name: {{ $fname }}
+  labels:
+    app: {{ $fname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+kind: RoleBinding
+apiVersion: {{ $rbacVersion }}
+metadata:
+  name: {{ $fname }}
+  labels:
+    app: {{ $fname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+subjects:
+- kind: ServiceAccount
+  name: {{ $fname }}
+roleRef:
+  kind: Role
+  name: {{ $fname }}
+  apiGroup: rbac.authorization.k8s.io
+{{ end }}
