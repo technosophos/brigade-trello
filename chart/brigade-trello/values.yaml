@@ -2,6 +2,13 @@
 rbac:
   enabled: false
 
+# If this is set to true, then the gateway will try to fetch the script from
+# the GitHub API using the project's API key. Otherwise, this will let the
+# controller and worker figure out where to get the Brigade script.
+#
+# Only set this to true if you know what you are doing.
+fetchScript: false
+
 replicaCount: 1
 image:
   repository: technosophos/brigade-trello

@@ -20,6 +20,9 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: BRIGADE_FETCH_SCRIPT
+              value: "{{ if .Values.fetchScript }}1{{ else }}0{{ end }}"
           ports:
             - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:

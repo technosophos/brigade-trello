@@ -14,6 +14,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// EnvFetchScript names the environment veriable for script fetching.
+//
+// If this environment variable is set to a truthy value, then this gateway
+// will try to use the GitHub API to fetch brigade script rather than leaving
+// it to the controller to load the script.
+const EnvFetchScript = "BRIGADE_FETCH_SCRIPT"
+
 var store storage.Store
 
 func main() {
@@ -61,15 +68,6 @@ func trelloFn(c *gin.Context) {
 		return
 	}
 
-	// Get the brigade.js
-	// Right now, we skip this and let the github project handle it.
-	script, err := webhook.GetFileContents(proj, "master", "brigade.js")
-	if err != nil {
-		log.Printf("Error getting file: %s", err)
-		c.JSON(http.StatusNotFound, gin.H{"status": "Script Not Found"})
-		return
-	}
-
 	// Create the build
 	build := &brigade.Build{
 		ProjectID: pid,
@@ -77,8 +75,20 @@ func trelloFn(c *gin.Context) {
 		Provider:  "trello",
 		Commit:    "master",
 		Payload:   body,
-		Script:    script,
 	}
+
+	if fetch, ok := os.LookupEnv(EnvFetchScript); ok && fetch == "1" {
+		// Get the brigade.js
+		// Right now, we skip this and let the github project handle it.
+		script, err := webhook.GetFileContents(proj, "master", "brigade.js")
+		if err != nil {
+			log.Printf("Error getting file: %s", err)
+			c.JSON(http.StatusNotFound, gin.H{"status": "Script Not Found"})
+			return
+		}
+		build.Script = script
+	}
+
 	if err := store.CreateBuild(build); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "Failed to invoke hook"})
 		return
